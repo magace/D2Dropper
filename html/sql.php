@@ -101,22 +101,23 @@
 				print '<th width="*" class="text-center exocet"><strong>AsiaL</strong></th>';
 				print '<th width="*" class="text-center exocet"><strong>AsiaNL</strong></th>';
 				print '</tr></thead>';
-				
-				$array = array("Perfect", "+20 To All Attributes", "All Resistances +20", "10% To Experience Gained", "Unidentified", "All");
+
+				$array  = array("Perfect", "+20 To All Attributes", "All Resistances +20", "10% To Experience Gained", "Unidentified", "All");
+				$counts = fetchAnni($argument, 1);
 				for ($y = 0; $y < count($array); $y++) {
 					print '<tr>';
 					print '<td width="30%" class="text-left">'.$array[$y].'</td>';
-					print '<td width="*" class="text-center">'.Anni(3, $argument, 1, 1, $y).'</td>';
-					print '<td width="*" class="text-center">'.Anni(3, $argument, 0, 1, $y).'</td>';
-					print '<td width="*" class="text-center">'.Anni(1, $argument, 1, 1, $y).'</td>';
-					print '<td width="*" class="text-center">'.Anni(1, $argument, 0, 1, $y).'</td>';
-					print '<td width="*" class="text-center">'.Anni(0, $argument, 1, 1, $y).'</td>';
-					print '<td width="*" class="text-center">'.Anni(0, $argument, 0, 1, $y).'</td>';
-					print '<td width="*" class="text-center">'.Anni(2, $argument, 1, 1, $y).'</td>';
-					print '<td width="*" class="text-center">'.Anni(2, $argument, 0, 1, $y).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, $y, 3, 1).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, $y, 3, 0).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, $y, 1, 1).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, $y, 1, 0).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, $y, 0, 1).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, $y, 0, 0).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, $y, 2, 1).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, $y, 2, 0).'</td>';
 					print '</tr>';
 				}
-				
+
 				print '</table>';
 				
 			} else if($function === "listPandemonium") {
@@ -134,25 +135,25 @@
 				print '<th width="*" class="text-center exocet"><strong>AsiaL</strong></th>';
 				print '<th width="*" class="text-center exocet"><strong>AsiaNL</strong></th>';
 				print '</tr></thead>';
-				
-				$array = array("pk1", "pk2", "pk3", "dhn", "bey", "mbr");
+
+				$array  = array("pk1", "pk2", "pk3", "dhn", "bey", "mbr");
 				$array2 = array("Key of Terror", "Key of Hate", "Key of Destruction", "Diablo's Horn", "Baal's Eye", "Mephisto's Brain");
+				$counts = fetchByClassId($argument, $exp, 647, 647 + count($array) - 1);
 				for ($y = 0; $y < count($array); $y++) {
+					$id = 647 + $y;
 					print '<tr>';
-					// realms: { "uswest": 0, "useast": 1, "asia": 2, "europe": 3 },
-					// Runes($queryR, $queryHC, $queryLD, $queryEXP, $itemId)
 					print '<td width="30%" class="text-left rune"><img src="images/items/'.$array[$y].'.png"> '.$array2[$y].'</td>';
-					print '<td width="*" class="text-center">'.Runes(3, $argument, 1, $exp, 647 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(3, $argument, 0, $exp, 647 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(1, $argument, 1, $exp, 647 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(1, $argument, 0, $exp, 647 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(0, $argument, 1, $exp, 647 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(0, $argument, 0, $exp, 647 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(2, $argument, 1, $exp, 647 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(2, $argument, 0, $exp, 647 + $y).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 3, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 3, 0, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 1, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 1, 0, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 0, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 0, 0, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 2, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 2, 0, $id).'</td>';
 					print '</tr>';
 				}
-				
+
 				print '</table>';
 				
 			} else if($function === "listRunes") {
@@ -170,24 +171,24 @@
 				print '<th width="*" class="text-center exocet"><strong>AsiaL</strong></th>';
 				print '<th width="*" class="text-center exocet"><strong>AsiaNL</strong></th>';
 				print '</tr></thead>';
-				
-				$array = array("El", "Eld", "Tir", "Nef", "Eth", "Ith", "Tal", "Ral", "Ort", "Thul", "Amn", "Sol", "Shael", "Dol", "Hel", "Io", "Lum", "Ko", "Fal", "Lem", "Pul", "Um", "Mal", "Ist", "Gul", "Vex", "Ohm", "Lo", "Sur", "Ber", "Jah", "Cham", "Zod");
+
+				$array  = array("El", "Eld", "Tir", "Nef", "Eth", "Ith", "Tal", "Ral", "Ort", "Thul", "Amn", "Sol", "Shael", "Dol", "Hel", "Io", "Lum", "Ko", "Fal", "Lem", "Pul", "Um", "Mal", "Ist", "Gul", "Vex", "Ohm", "Lo", "Sur", "Ber", "Jah", "Cham", "Zod");
+				$counts = fetchByClassId($argument, $exp, 610, 610 + count($array) - 1);
 				for ($y = 0; $y < count($array); $y++) {
+					$id = 610 + $y;
 					print '<tr>';
-					// realms: { "uswest": 0, "useast": 1, "asia": 2, "europe": 3 },
-					// Runes($queryR, $queryHC, $queryLD, $queryEXP, $itemId)
 					print '<td width="30%" class="text-left rune"><img src="images/items/r'.$array[$y].'.png"> '.$array[$y].'</td>';
-					print '<td width="*" class="text-center">'.Runes(3, $argument, 1, $exp, 610 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(3, $argument, 0, $exp, 610 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(1, $argument, 1, $exp, 610 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(1, $argument, 0, $exp, 610 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(0, $argument, 1, $exp, 610 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(0, $argument, 0, $exp, 610 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(2, $argument, 1, $exp, 610 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(2, $argument, 0, $exp, 610 + $y).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 3, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 3, 0, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 1, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 1, 0, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 0, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 0, 0, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 2, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 2, 0, $id).'</td>';
 					print '</tr>';
 				}
-				
+
 				print '</table>';
 				
 			} else if($function === "listGems") {
@@ -208,54 +209,49 @@
 
 				$array = array(
 					"<img src=\"images/items/gsva.png\"> Amethyst",
-                    "<img src=\"images/items/gsvb.png\"> Amethyst",
-                    "<img src=\"images/items/gsvc.png\"> Amethyst",
-                    "<img src=\"images/items/gsvd.png\"> Amethyst",
-                    "<img src=\"images/items/gsve.png\"> Amethyst",
-
+					"<img src=\"images/items/gsvb.png\"> Amethyst",
+					"<img src=\"images/items/gsvc.png\"> Amethyst",
+					"<img src=\"images/items/gsvd.png\"> Amethyst",
+					"<img src=\"images/items/gsve.png\"> Amethyst",
 					"<img src=\"images/items/gsya.png\"> Topaz",
-                    "<img src=\"images/items/gsyb.png\"> Topaz",
-                    "<img src=\"images/items/gsyc.png\"> Topaz",
-                    "<img src=\"images/items/gsyd.png\"> Topaz",
-                    "<img src=\"images/items/gsye.png\"> Topaz",
-
+					"<img src=\"images/items/gsyb.png\"> Topaz",
+					"<img src=\"images/items/gsyc.png\"> Topaz",
+					"<img src=\"images/items/gsyd.png\"> Topaz",
+					"<img src=\"images/items/gsye.png\"> Topaz",
 					"<img src=\"images/items/gsba.png\"> Sapphire",
-                    "<img src=\"images/items/gsbb.png\"> Sapphire",
-                    "<img src=\"images/items/gsbc.png\"> Sapphire",
-                    "<img src=\"images/items/gsbd.png\"> Sapphire",
-                    "<img src=\"images/items/gsbe.png\"> Sapphire",
-
+					"<img src=\"images/items/gsbb.png\"> Sapphire",
+					"<img src=\"images/items/gsbc.png\"> Sapphire",
+					"<img src=\"images/items/gsbd.png\"> Sapphire",
+					"<img src=\"images/items/gsbe.png\"> Sapphire",
 					"<img src=\"images/items/gsga.png\"> Emerald",
-                    "<img src=\"images/items/gsgb.png\"> Emerald",
-                    "<img src=\"images/items/gsgc.png\"> Emerald",
-                    "<img src=\"images/items/gsgd.png\"> Emerald",
-                    "<img src=\"images/items/gsge.png\"> Emerald",
-
+					"<img src=\"images/items/gsgb.png\"> Emerald",
+					"<img src=\"images/items/gsgc.png\"> Emerald",
+					"<img src=\"images/items/gsgd.png\"> Emerald",
+					"<img src=\"images/items/gsge.png\"> Emerald",
 					"<img src=\"images/items/gsra.png\"> Ruby",
-                    "<img src=\"images/items/gsrb.png\"> Ruby",
-                    "<img src=\"images/items/gsrc.png\"> Ruby",
-                    "<img src=\"images/items/gsrd.png\"> Ruby",
-                    "<img src=\"images/items/gsre.png\"> Ruby",
-
+					"<img src=\"images/items/gsrb.png\"> Ruby",
+					"<img src=\"images/items/gsrc.png\"> Ruby",
+					"<img src=\"images/items/gsrd.png\"> Ruby",
+					"<img src=\"images/items/gsre.png\"> Ruby",
 					"<img src=\"images/items/gswa.png\"> Diamond",
-                    "<img src=\"images/items/gswb.png\"> Diamond",
-                    "<img src=\"images/items/gswc.png\"> Diamond",
-                    "<img src=\"images/items/gswd.png\"> Diamond",
-                    "<img src=\"images/items/gswe.png\"> Diamond"
+					"<img src=\"images/items/gswb.png\"> Diamond",
+					"<img src=\"images/items/gswc.png\"> Diamond",
+					"<img src=\"images/items/gswd.png\"> Diamond",
+					"<img src=\"images/items/gswe.png\"> Diamond"
 				);
-				for ($y = 0; $y < count($array); $y = $y + 1) {
+				$counts = fetchByClassId($argument, $exp, 557, 557 + count($array) - 1);
+				for ($y = 0; $y < count($array); $y++) {
+					$id = 557 + $y;
 					print '<tr>';
-					// realms: { "uswest": 0, "useast": 1, "asia": 2, "europe": 3 },
-					// Runes($queryR, $queryHC, $queryLD, $queryEXP, $itemId)
 					print '<td width="30%" class="text-left">'.$array[$y].'</td>';
-					print '<td width="*" class="text-center">'.Runes(3, $argument, 1, $exp, 557 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(3, $argument, 0, $exp, 557 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(1, $argument, 1, $exp, 557 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(1, $argument, 0, $exp, 557 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(0, $argument, 1, $exp, 557 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(0, $argument, 0, $exp, 557 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(2, $argument, 1, $exp, 557 + $y).'</td>';
-					print '<td width="*" class="text-center">'.Runes(2, $argument, 0, $exp, 557 + $y).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 3, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 3, 0, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 1, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 1, 0, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 0, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 0, 0, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 2, 1, $id).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 2, 0, $id).'</td>';
 					print '</tr>';
 				}
 
@@ -277,27 +273,21 @@
 				print '<th width="*" class="text-center exocet"><strong>AsiaNL</strong></th>';
 				print '</tr></thead>';
 
-				$array = array(
-					"Perfect Skull",
-                    "The Stone of Jordan Ring"
-				);
-				$imagino = array(
-					"<img src=\"images/items/skz.png\">",
-					"<img src=\"images/items/rin3.png\">"
-				);
+				$array   = array("Perfect Skull", "The Stone of Jordan Ring");
+				$imagino = array("<img src=\"images/items/skz.png\">", "<img src=\"images/items/rin3.png\">");
+				$counts  = fetchByItemName($argument, $exp, $array);
 				for ($y = 0; $y < count($array); $y++) {
+					$name = $array[$y];
 					print '<tr>';
-					// realms: { "uswest": 0, "useast": 1, "asia": 2, "europe": 3 },
-					// Runes($queryR, $queryHC, $queryLD, $queryEXP, $itemId)
-					print '<td width="30%" class="text-left">'.$imagino[$y].' '.$array[$y].'</td>';
-					print '<td width="*" class="text-center">'.ListByName(3, $argument, 1, $exp, $array[$y]).'</td>';
-					print '<td width="*" class="text-center">'.ListByName(3, $argument, 0, $exp, $array[$y]).'</td>';
-					print '<td width="*" class="text-center">'.ListByName(1, $argument, 1, $exp, $array[$y]).'</td>';
-					print '<td width="*" class="text-center">'.ListByName(1, $argument, 0, $exp, $array[$y]).'</td>';
-					print '<td width="*" class="text-center">'.ListByName(0, $argument, 1, $exp, $array[$y]).'</td>';
-					print '<td width="*" class="text-center">'.ListByName(0, $argument, 0, $exp, $array[$y]).'</td>';
-					print '<td width="*" class="text-center">'.ListByName(2, $argument, 1, $exp, $array[$y]).'</td>';
-					print '<td width="*" class="text-center">'.ListByName(2, $argument, 0, $exp, $array[$y]).'</td>';
+					print '<td width="30%" class="text-left">'.$imagino[$y].' '.$name.'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 3, 1, $name).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 3, 0, $name).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 1, 1, $name).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 1, 0, $name).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 0, 1, $name).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 0, 0, $name).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 2, 1, $name).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 2, 0, $name).'</td>';
 					print '</tr>';
 				}
 
@@ -319,33 +309,20 @@
 				print '<th width="*" class="text-center exocet"><strong>AsiaNL</strong></th>';
 				print '</tr></thead>';
 
-				$array = array(
-                    "The Stone of Jordan Ring",
-                    "The Stone of Jordan Ring",
-                    "The Stone of Jordan Ring",
-                    "The Stone of Jordan Ring",
-                    "The Stone of Jordan Ring"
-				);
-				$imagino = array(
-					"<img src=\"images/items/rin1.png\">",
-					"<img src=\"images/items/rin2.png\">",
-					"<img src=\"images/items/rin3.png\">",
-					"<img src=\"images/items/rin4.png\">",
-					"<img src=\"images/items/rin5.png\">",
-				);
-				for ($y = 0; $y < count($array); $y++) {
+				$skins  = array("rin1", "rin2", "rin3", "rin4", "rin5");
+				$counts = fetchByNameSkin($argument, $exp, "The Stone of Jordan Ring");
+				for ($y = 0; $y < count($skins); $y++) {
+					$skin = $skins[$y];
 					print '<tr>';
-					// realms: { "uswest": 0, "useast": 1, "asia": 2, "europe": 3 },
-					// Runes($queryR, $queryHC, $queryLD, $queryEXP, $itemId)
-					print '<td width="30%" class="text-left">'.$imagino[$y].' '.$array[$y].'</td>';
-					print '<td width="*" class="text-center">'.ListByNameSkin(3, $argument, 1, $exp, $array[$y], $y+1).'</td>';
-					print '<td width="*" class="text-center">'.ListByNameSkin(3, $argument, 0, $exp, $array[$y], $y+1).'</td>';
-					print '<td width="*" class="text-center">'.ListByNameSkin(1, $argument, 1, $exp, $array[$y], $y+1).'</td>';
-					print '<td width="*" class="text-center">'.ListByNameSkin(1, $argument, 0, $exp, $array[$y], $y+1).'</td>';
-					print '<td width="*" class="text-center">'.ListByNameSkin(0, $argument, 1, $exp, $array[$y], $y+1).'</td>';
-					print '<td width="*" class="text-center">'.ListByNameSkin(0, $argument, 0, $exp, $array[$y], $y+1).'</td>';
-					print '<td width="*" class="text-center">'.ListByNameSkin(2, $argument, 1, $exp, $array[$y], $y+1).'</td>';
-					print '<td width="*" class="text-center">'.ListByNameSkin(2, $argument, 0, $exp, $array[$y], $y+1).'</td>';
+					print '<td width="30%" class="text-left"><img src="images/items/'.$skin.'.png"> The Stone of Jordan Ring</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 3, 1, $skin).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 3, 0, $skin).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 1, 1, $skin).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 1, 0, $skin).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 0, 1, $skin).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 0, 0, $skin).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 2, 1, $skin).'</td>';
+					print '<td width="*" class="text-center">'.cnt($counts, 2, 0, $skin).'</td>';
 					print '</tr>';
 				}
 
@@ -444,218 +421,139 @@
 		}
 	}
 	
-	function Runes($queryR, $queryHC, $queryLD, $queryEXP, $itemId) {
+	// Returns [realm][ladder][classid] => count for a contiguous range of item class IDs
+	function fetchByClassId($queryHC, $queryEXP, $idMin, $idMax) {
 		try {
-			$conn = new PDO('sqlite:ItemDB.s3db') or die("Unable to connect");
-
-			$tempA	= " AND charHardcore = ".$queryHC;
-			$tempB	= " AND charExpansion = ".$queryEXP;
-			$tempC	= " AND charLadder = ".$queryLD;
-			$tempD	= " AND itemClassid = ".$itemId;
-			
-			$sql = /** @lang text */
-				'SELECT COUNT() AS "count" FROM muleItems LEFT JOIN muleChars ON itemCharId = charId LEFT JOIN muleAccounts ON charAccountId = accountId WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.'';
-			$results = $conn->query($sql);
+			$conn = new PDO('sqlite:ItemDB.s3db');
+			$sql  = 'SELECT accountRealm, charLadder, itemClassid, COUNT(*) as cnt
+			         FROM muleItems
+			         LEFT JOIN muleChars ON itemCharId = charId
+			         LEFT JOIN muleAccounts ON charAccountId = accountId
+			         WHERE charHardcore = '.(int)$queryHC.' AND charExpansion = '.(int)$queryEXP.'
+			           AND itemClassid BETWEEN '.(int)$idMin.' AND '.(int)$idMax.'
+			         GROUP BY accountRealm, charLadder, itemClassid';
+			$rows = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 			$conn = NULL;
-			$itemsDB = $results->fetchAll(PDO::FETCH_ASSOC);
-			return $itemsDB[0]["count"];
-			
-		} catch(PDOException $e) {
-			$conn = NULL;
-			print 'Exception : '.$e->getMessage();
-			return false;
+			$out  = [];
+			foreach ($rows as $r) {
+				$out[(int)$r['accountRealm']][(int)$r['charLadder']][(int)$r['itemClassid']] = (int)$r['cnt'];
+			}
+			return $out;
+		} catch (PDOException $e) {
+			return [];
 		}
 	}
 
-	function ListByName($queryR, $queryHC, $queryLD, $queryEXP, $itemId) {
+	// Returns [realm][ladder][itemName] => count
+	function fetchByItemName($queryHC, $queryEXP, $names) {
 		try {
-			$conn = new PDO('sqlite:ItemDB.s3db') or die("Unable to connect");
-
-			$tempA	= " AND charHardcore = ".$queryHC;
-			$tempB	= " AND charExpansion = ".$queryEXP;
-			$tempC	= " AND charLadder = ".$queryLD;
-			$tempD	= " AND itemName = '".$itemId."'";
-
-			$sql = /** @lang text */
-				'SELECT COUNT() AS "count" FROM muleItems LEFT JOIN muleChars ON itemCharId = charId LEFT JOIN muleAccounts ON charAccountId = accountId WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.'';
-			$results = $conn->query($sql);
-			$conn = NULL;
-			$itemsDB = $results->fetchAll(PDO::FETCH_ASSOC);
-			return $itemsDB[0]["count"];
-
-		} catch(PDOException $e) {
-			$conn = NULL;
-			print 'Exception : '.$e->getMessage();
-			return false;
+			$conn   = new PDO('sqlite:ItemDB.s3db');
+			$quoted = implode(',', array_map(function($n) { return "'".str_replace("'", "''", $n)."'"; }, $names));
+			$sql    = 'SELECT accountRealm, charLadder, itemName, COUNT(*) as cnt
+			           FROM muleItems
+			           LEFT JOIN muleChars ON itemCharId = charId
+			           LEFT JOIN muleAccounts ON charAccountId = accountId
+			           WHERE charHardcore = '.(int)$queryHC.' AND charExpansion = '.(int)$queryEXP.'
+			             AND itemName IN ('.$quoted.')
+			           GROUP BY accountRealm, charLadder, itemName';
+			$rows   = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+			$conn   = NULL;
+			$out    = [];
+			foreach ($rows as $r) {
+				$out[(int)$r['accountRealm']][(int)$r['charLadder']][$r['itemName']] = (int)$r['cnt'];
+			}
+			return $out;
+		} catch (PDOException $e) {
+			return [];
 		}
 	}
 
-	function ListByNameSkin($queryR, $queryHC, $queryLD, $queryEXP, $itemId, $skin) {
+	// Returns [realm][ladder][itemImage] => count, filtered by item name
+	function fetchByNameSkin($queryHC, $queryEXP, $itemName) {
 		try {
-			$conn = new PDO('sqlite:ItemDB.s3db') or die("Unable to connect");
-
-			$tempA	= " AND charHardcore = ".$queryHC;
-			$tempB	= " AND charExpansion = ".$queryEXP;
-			$tempC	= " AND charLadder = ".$queryLD;
-			$tempD	= " AND itemName = '".$itemId."'";
-			$tempE	= " AND itemImage = 'rin".$skin."'";
-
-			$sql = /** @lang text */
-				'SELECT COUNT() AS "count" FROM muleItems LEFT JOIN muleChars ON itemCharId = charId LEFT JOIN muleAccounts ON charAccountId = accountId WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.' '.$tempE.'';
-			$results = $conn->query($sql);
+			$conn = new PDO('sqlite:ItemDB.s3db');
+			$safe = str_replace("'", "''", $itemName);
+			$sql  = 'SELECT accountRealm, charLadder, itemImage, COUNT(*) as cnt
+			         FROM muleItems
+			         LEFT JOIN muleChars ON itemCharId = charId
+			         LEFT JOIN muleAccounts ON charAccountId = accountId
+			         WHERE charHardcore = '.(int)$queryHC.' AND charExpansion = '.(int)$queryEXP.'
+			           AND itemName = \''.$safe.'\'
+			         GROUP BY accountRealm, charLadder, itemImage';
+			$rows = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 			$conn = NULL;
-			$itemsDB = $results->fetchAll(PDO::FETCH_ASSOC);
-			return $itemsDB[0]["count"];
-
-		} catch(PDOException $e) {
-			$conn = NULL;
-			print 'Exception : '.$e->getMessage();
-			return false;
+			$out  = [];
+			foreach ($rows as $r) {
+				$out[(int)$r['accountRealm']][(int)$r['charLadder']][$r['itemImage']] = (int)$r['cnt'];
+			}
+			return $out;
+		} catch (PDOException $e) {
+			return [];
 		}
 	}
-	
-	function Torch($queryR, $queryHC, $queryLD, $queryEXP, $itemId) {
-		try {
-			$conn = new PDO('sqlite:ItemDB.s3db') or die("Unable to connect");
 
-			$tempA	= " AND charHardcore = ".$queryHC;
-			$tempB	= " AND charExpansion = ".$queryEXP;
-			$tempC	= " AND charLadder = ".$queryLD;
-			$tempD	= " AND itemClassid = ".$itemId;
-			
-			$sql = /** @lang text */
-				'SELECT COUNT() AS "count" FROM muleItems LEFT JOIN muleChars ON itemCharId = charId LEFT JOIN muleAccounts ON charAccountId = accountId WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.'';
-			$results = $conn->query($sql);
+	// Returns [mode][realm][ladder] => count for all 6 Annihilus display modes
+	function fetchAnni($queryHC, $queryEXP) {
+		try {
+			$conn      = new PDO('sqlite:ItemDB.s3db');
+			$hc        = (int)$queryHC;
+			$exp       = (int)$queryEXP;
+			$baseJoins = 'FROM muleItems i
+			              LEFT JOIN muleChars c ON i.itemCharId = c.charId
+			              LEFT JOIN muleAccounts a ON c.charAccountId = a.accountId';
+			$baseWhere = 'WHERE c.charHardcore = '.$hc.' AND c.charExpansion = '.$exp.'
+			               AND i.itemQuality = 7 AND i.itemClassid = 603';
+			$group     = 'GROUP BY a.accountRealm, c.charLadder';
+
+			$queries = [
+				// 0: Perfect (str=20 AND fireresist=20 AND exp=10) — use INNER JOINs
+				'SELECT a.accountRealm, c.charLadder, COUNT(DISTINCT i.itemId) as cnt '.$baseJoins.'
+				 INNER JOIN muleItemsStats s1 ON s1.statsItemId = i.itemId AND s1.statsName = "strength"          AND s1.statsValue = 20
+				 INNER JOIN muleItemsStats s2 ON s2.statsItemId = i.itemId AND s2.statsName = "fireresist"        AND s2.statsValue = 20
+				 INNER JOIN muleItemsStats s3 ON s3.statsItemId = i.itemId AND s3.statsName = "itemaddexperience" AND s3.statsValue = 10
+				 '.$baseWhere.' '.$group,
+				// 1: +20 All Attr (str=20)
+				'SELECT a.accountRealm, c.charLadder, COUNT(DISTINCT i.itemId) as cnt '.$baseJoins.'
+				 INNER JOIN muleItemsStats s ON s.statsItemId = i.itemId AND s.statsName = "strength" AND s.statsValue = 20
+				 '.$baseWhere.' '.$group,
+				// 2: All Res +20 (fireresist=20)
+				'SELECT a.accountRealm, c.charLadder, COUNT(DISTINCT i.itemId) as cnt '.$baseJoins.'
+				 INNER JOIN muleItemsStats s ON s.statsItemId = i.itemId AND s.statsName = "fireresist" AND s.statsValue = 20
+				 '.$baseWhere.' '.$group,
+				// 3: 10% Exp
+				'SELECT a.accountRealm, c.charLadder, COUNT(DISTINCT i.itemId) as cnt '.$baseJoins.'
+				 INNER JOIN muleItemsStats s ON s.statsItemId = i.itemId AND s.statsName = "itemaddexperience" AND s.statsValue = 10
+				 '.$baseWhere.' '.$group,
+				// 4: Unidentified
+				'SELECT a.accountRealm, c.charLadder, COUNT(DISTINCT i.itemId) as cnt '.$baseJoins.'
+				 '.$baseWhere.' AND lower(i.itemDescription) LIKE "%unidentified%" '.$group,
+				// 5: All
+				'SELECT a.accountRealm, c.charLadder, COUNT(DISTINCT i.itemId) as cnt '.$baseJoins.'
+				 '.$baseWhere.' '.$group,
+			];
+
+			$out = [];
+			foreach ($queries as $m => $sql) {
+				$out[$m] = [];
+				foreach ($conn->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
+					$out[$m][(int)$r['accountRealm']][(int)$r['charLadder']] = (int)$r['cnt'];
+				}
+			}
 			$conn = NULL;
-			$itemsDB = $results->fetchAll(PDO::FETCH_ASSOC);
-			return $itemsDB[0]["count"];
-		} catch(PDOException $e) {
-			$conn = NULL;
-			print 'Exception : '.$e->getMessage();
-			return false;
+			return $out;
+		} catch (PDOException $e) {
+			return [];
 		}
 	}
-	
-	function Anni($queryR, $queryHC, $queryLD, $queryEXP, $mode) {
-		try {
-			$conn = new PDO('sqlite:ItemDB.s3db') or die("Unable to connect");
 
-			$tempA	= " AND charHardcore = ".$queryHC;
-			$tempB	= " AND charExpansion = ".$queryEXP;
-			$tempC	= " AND charLadder = ".$queryLD;
-			$tempD	= " AND itemQuality = 7 AND itemClassid = 603";
-			$sql	= "";
-			
-			// Perfect OMG WTF!
-			if($mode === 0) {
-				$sqlA = /** @lang text */
-					'SELECT DISTINCT itemId
-							FROM muleItems 
-								LEFT JOIN muleChars ON itemCharId = charId 
-								LEFT JOIN muleAccounts ON charAccountId = accountId 
-								LEFT JOIN muleItemsStats ON statsItemId = itemId 
-							WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.' 
-								AND statsName = "strength" 
-								AND statsValue = 20';
-								
-				$results = $conn->query($sqlA);
-				$itemsDB = $results->fetchAll(PDO::FETCH_ASSOC);
-				$string = array();
-				foreach ($itemsDB as $nr => $item) {
-					array_push($string, ' statsItemId = '.$item["itemId"].' ');
-				}
-				if (count($string) === 0) {
-					return 0;
-				}
-				$glue = implode("OR", $string);
-				$sqlB = /** @lang text */
-					'SELECT DISTINCT statsItemId
-							FROM muleItemsStats 
-							WHERE ('.$glue.') 
-								AND statsName = "fireresist" 
-								AND statsValue = 20';		
-								
-				$results = $conn->query($sqlB);
-				$itemsDB = $results->fetchAll(PDO::FETCH_ASSOC);
-				$string = array();
-				foreach ($itemsDB as $nr => $item) {
-					array_push($string, ' statsItemId = '.$item["statsItemId"].' ');
-				}
-				if (count($string) === 0) {
-					return 0;
-				}
-				$glue = implode("OR", $string);
-				$sql = /** @lang text */
-					'SELECT COUNT(DISTINCT statsItemId) as "count"
-							FROM muleItemsStats 
-							WHERE ('.$glue.') 
-								AND statsName = "itemaddexperience" 
-								AND statsValue = 10';
-			}
-			// +20 To All Attributes
-			if($mode === 1) {
-				$sql = /** @lang text */
-					'SELECT COUNT(DISTINCT itemId) AS "count"
-							FROM muleItems 
-								LEFT JOIN muleChars ON itemCharId = charId 
-								LEFT JOIN muleAccounts ON charAccountId = accountId 
-								LEFT JOIN muleItemsStats ON statsItemId = itemId 
-							WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.'  AND statsName = "strength" AND statsValue = 20';
-			}
-			// All Resistances +20
-			if($mode === 2) {
-				$sql = /** @lang text */
-					'SELECT COUNT(DISTINCT itemId) AS "count"
-							FROM muleItems 
-								LEFT JOIN muleChars ON itemCharId = charId 
-								LEFT JOIN muleAccounts ON charAccountId = accountId 
-								LEFT JOIN muleItemsStats ON statsItemId = itemId 
-							WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.'  AND statsName = "fireresist" AND statsValue = 20';
-			}
-			// 10% To Experience Gained
-			if($mode === 3) {
-				$sql = /** @lang text */
-					'SELECT COUNT(DISTINCT itemId) AS "count"
-							FROM muleItems 
-								LEFT JOIN muleChars ON itemCharId = charId 
-								LEFT JOIN muleAccounts ON charAccountId = accountId 
-								LEFT JOIN muleItemsStats ON statsItemId = itemId 
-							WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.' AND statsName = "itemaddexperience" AND statsValue = 10';
-			}
-			// Unidentified
-			if($mode === 4) {
-				$sql = /** @lang text */
-					'SELECT COUNT(DISTINCT itemId) AS "count"
-							FROM muleItems 
-								LEFT JOIN muleChars ON itemCharId = charId 
-								LEFT JOIN muleAccounts ON charAccountId = accountId 
-								LEFT JOIN muleItemsStats ON statsItemId = itemId 
-							WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.' AND lower(itemDescription) LIKE "%unidentified%"';
-			}
-			// All
-			if($mode === 5) {
-				$sql = /** @lang text */
-					'SELECT COUNT(DISTINCT itemId) AS "count"
-							FROM muleItems 
-								LEFT JOIN muleChars ON itemCharId = charId 
-								LEFT JOIN muleAccounts ON charAccountId = accountId 
-								LEFT JOIN muleItemsStats ON statsItemId = itemId 
-							WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.'';				
-			}
-
-			$results = $conn->query($sql);
-			
-			$conn = NULL;
-			
-			$itemsDB = $results->fetchAll(PDO::FETCH_ASSOC);
-			
-			return $itemsDB[0]["count"];
-			
-		} catch(PDOException $e) {
-			$conn = NULL;
-			print 'Exception : '.$e->getMessage();
-			return false;
+	// Nested array lookup with default 0
+	function cnt($lookup, ...$keys) {
+		$v = $lookup;
+		foreach ($keys as $k) {
+			if (!is_array($v) || !array_key_exists($k, $v)) return 0;
+			$v = $v[$k];
 		}
+		return $v;
 	}
 
 	function Logs() {

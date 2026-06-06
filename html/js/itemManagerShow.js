@@ -1,179 +1,138 @@
-;(function ($, window, document) {
-    // # - id
-    // . - class
+// Called on page ready (from index.php) and after every AJAX item load (from itemManager.js)
+function initItemRows() {
+    showHighligh();
+    updateDropCount();
 
-    // tr attributes: draccount, drchar, drmd5, drrealm, drname
-    $(document).ready(function() {
-        // highlight rows from array prevent double selecting same item
+    // Direct binding — rows exist in DOM at this point
+    $('#itemstable > tbody > tr').off('click.itemshow').on('click.itemshow', function () {
+        var img = $('div.tooltipster-base');
+        if (img.length > 0) {
+            imgurUpload(img, true, $(this).attr('drImage') + "-" + $(this).attr('drmd5'));
+        }
 
-        showHighligh();
+        if ($(this).hasClass("selecteditem") === false) {
+            $(this).addClass("selecteditem");
 
-        //select/deselect item row
-        $('#itemstable > tbody > tr').click(function () {
-            var img = $('div.tooltipster-base');
-            if (img) {
-                imgurUpload(img, true, $(this).attr('drImage')+"-"+$(this).attr('drmd5'));
+            var data   = $(this).attr('drname');
+            var rowid  = $(this).attr('dritemid');
+            show.push(data);
+            rowsid.push(rowid);
+
+            var dropdata = {
+                dropProfile: "",
+                realm:    $(this).attr('drrealm'),
+                account:  $(this).attr('draccount'),
+                charName: $(this).attr('drchar'),
+                itemType: $(this).attr('dritemtype'),
+                dropit:   $(this).attr('drmd5'),
+                skin:     $(this).attr('drImage'),
+                itemID:   $(this).attr('drID')
+            };
+            droparray.push(JSON.stringify(dropdata));
+            updateDropCount();
+
+            var output = ParseSame(show);
+            var di = document.getElementById('dropitem');
+            var li = document.getElementById('listinfo');
+            if (di) { di.value = JSON.stringify(droparray); }
+            if (li) { li.value = JSON.stringify(droparray); }
+            $("#droplist").html(output);
+            $("#tradelist").html(output);
+
+        } else {
+            $(this).removeClass("selecteditem");
+
+            var data   = $(this).attr('drname');
+            var rowid  = $(this).attr('dritemid');
+            var pushtodrop = JSON.stringify({
+                dropProfile: "",
+                realm:    $(this).attr('drrealm'),
+                account:  $(this).attr('draccount'),
+                charName: $(this).attr('drchar'),
+                itemType: $(this).attr('dritemtype'),
+                dropit:   $(this).attr('drmd5'),
+                skin:     $(this).attr('drImage'),
+                itemID:   $(this).attr('drID')
+            });
+
+            for (var i = droparray.length - 1; i >= 0; i--) {
+                if (droparray[i] === pushtodrop) { droparray.splice(i, 1); break; }
             }
-            // select
-            if($(this).hasClass("selecteditem") === false) {
-                //change bg color
-                //$(this).css('background', 'LightGray');
-				$(this).addClass("selecteditem");
-
-                // get tr attributes
-                var data = $(this).attr('drname');
-                var rowid = $(this).attr('dritemid');
-
-                // push name to list
-                show.push(data);
-                rowsid.push(rowid);
-
-                var dropdata = {
-                    dropProfile: "",
-                    realm: $(this).attr('drrealm'),
-                    account: $(this).attr('draccount'),
-                    charName: $(this).attr('drchar'),
-                    itemType: $(this).attr('dritemtype'),
-                    dropit: $(this).attr('drmd5'),
-                    skin: $(this).attr('drImage'),
-                    itemID: $(this).attr('drID')
-                };
-
-                var pushtodrop = JSON.stringify(dropdata);
-
-                droparray.push(pushtodrop);
-
-                var output = ParseSame(show);
-                // update panel value
-                document.getElementById('dropitem').value = JSON.stringify(droparray);
-                $("#droplist").html(output);
-
-                // update panel value
-                document.getElementById('listinfo').value = JSON.stringify(droparray);
-                $("#tradelist").html(output);
-
+            for (var i = show.length - 1; i >= 0; i--) {
+                if (show[i] === data) { show.splice(i, 1); break; }
             }
-            // deselect
-            else {
-                // set bg color
-                //$(this).css('background', '');
-				$(this).removeClass("selecteditem");
-
-                //get tr attributes
-                data = $(this).attr('drname');
-                rowid = $(this).attr('dritemid');
-
-                dropdata = {
-                    dropProfile: "",
-                    realm: $(this).attr('drrealm'),
-                    account: $(this).attr('draccount'),
-                    charName: $(this).attr('drchar'),
-                    itemType: $(this).attr('dritemtype'),
-                    dropit: $(this).attr('drmd5'),
-                    skin: $(this).attr('drImage'),
-                    itemID: $(this).attr('drID')
-                };
-
-                pushtodrop = JSON.stringify(dropdata);
-
-                //search for item in array
-                for (var i = 0; i < droparray.length; i += 1) {
-                    if (droparray[i] == pushtodrop) {
-                        droparray.splice(i, 1);
-                        break;
-                    }
-                }
-
-                //search for item in array
-                for (var i = 0; i < show.length; i += 1) {
-                    if (show[i] == data) {
-                        show.splice(i, 1);
-                        break;
-                    }
-                }
-
-                //search for item in array
-                for (var i = 0; i < rowsid.length; i += 1) {
-                    if (rowsid[i] == rowid) {
-                        rowsid.splice(i, 1);
-                        break;
-                    }
-                }
-                var output = ParseSame(show);
-                // update panel value
-                document.getElementById('dropitem').value = JSON.stringify(droparray);
-                $("#droplist").html(output);
-
-                // update panel value
-                document.getElementById('listinfo').value = JSON.stringify(droparray);
-                $("#tradelist").html(output);
+            for (var i = rowsid.length - 1; i >= 0; i--) {
+                if (rowsid[i] === rowid) { rowsid.splice(i, 1); break; }
             }
-        });
+            updateDropCount();
 
-
-        // function on click for 'showhide' class.
-        $('.showhide').click(function() {
-            /* locations related to kolbot:
-                loc1 - body
-                loc2 - belt
-                loc3 - inventory
-                loc5 - tradescreen
-                loc6 - cube
-                loc7 - stash
-            */
-
-            var text = $(this).html();
-
-            // hide tr with class "loc1"
-            if (text == "hide equiped") {
-                $('.loc1').hide();
-                $(this).html("show equiped");
-            } else {
-                $('.loc1').show();
-                $(this).html("hide equiped");
-            }
-        });
+            var output = ParseSame(show);
+            var di = document.getElementById('dropitem');
+            var li = document.getElementById('listinfo');
+            if (di) { di.value = JSON.stringify(droparray); }
+            if (li) { li.value = JSON.stringify(droparray); }
+            $("#droplist").html(output);
+            $("#tradelist").html(output);
+        }
     });
 
-    // tooltip
+    // Hide/show equipped
+    $('.showhide').off('click.showhide').on('click.showhide', function () {
+        if ($(this).html() === "hide equiped") {
+            $('.loc1').hide();
+            $(this).html("show equiped");
+        } else {
+            $('.loc1').show();
+            $(this).html("hide equiped");
+        }
+    });
+
+    // Tooltips
+    var tooltipSide = window.innerWidth <= 991 ? 'top' : 'left';
     $('.show-tooltip').each(function () {
         var p = $(this).parent();
-        if(p.is('td')) {
-            /* if your tooltip is on a <td>, transfer <td>'s padding to wrapper */
+        if (p.is('td')) {
             $(this).css('padding', p.css('padding'));
             p.css('padding', '0 0');
         }
         $(this).tooltipster({
-            delay: 0,
-            speed: 0,
-            touchDevices: false,
-            arrow: false,
-            position: "left",
-            interactive: true,
-            interactiveTolerance: 30,
-            contentAsHTML: true,
-            animation: 'fade',
-            trigger: 'hover'
+            delay: 0, speed: 0, touchDevices: false, arrow: false,
+            position: tooltipSide, interactive: true, interactiveTolerance: 30,
+            contentAsHTML: true, animation: 'fade', trigger: 'hover'
         });
     });
-	
-	$('table#itemstable').tablesorter();
 
+    // Mobile: inject card images
+    if (window.innerWidth <= 991) {
+        $('#itemstable tbody tr.item').each(function () {
+            var img = $(this).attr('drImage');
+            if (img) {
+                $(this).find('td:last').prepend(
+                    '<img class="card-img" src="images/items/' + img + '.png" onerror="this.style.display=\'none\'">'
+                );
+            }
+        });
+    }
+
+    $('table#itemstable').tablesorter();
+}
+
+;(function ($, window, document) {
+    $(document).ready(function () {
+        loadDropFromStorage();
+        initItemRows();
+    });
 })( jQuery, window, document );
 
 function showHighligh() {
     $('tr.item').each(function () {
         var checkrow = $(this).attr('dritemid');
-
-        if(rowsid.indexOf(checkrow) > -1) {
-            //$(this).css('background', 'LightGray');
+        if (rowsid.indexOf(checkrow) > -1) {
             $(this).addClass("selecteditem");
         } else {
-            //$(this).css('background', '');
             $(this).removeClass("selecteditem");
         }
-
-        if(hideid.indexOf(checkrow) > -1) {
+        if (hideid.indexOf(checkrow) > -1) {
             $(this).hide();
         }
     });
@@ -182,71 +141,90 @@ function showHighligh() {
 function ParseSame(list) {
     var result = {}, STR = "", i, j;
     for (i = 0; i < list.length; i++) {
-        if (!result[list[i]]) {
-            result[list[i]] = 1;
-        } else {
-            result[list[i]] = result[list[i]] + 1;
-        }
+        result[list[i]] = (result[list[i]] || 0) + 1;
     }
     for (j in result) {
-        STR = STR + j + " x" + result[j] + "<br>";
+        STR += j + " x" + result[j] + "<br>";
     }
-    STR = '<div class="color8" style="text-align: center;"><strong>' + list.length + ' item(s) selected.</strong></div><br />' + STR;
-    return STR;
+    return '<div class="color8" style="text-align:center"><strong>' + list.length + ' item(s) selected.</strong></div><br />' + STR;
 }
 
-function MarkThem(){
+function MarkThem() {
     var counter = document.getElementById('massMark').value;
-    if (counter < 1) {
-        return false;
-    }
+    if (counter < 1) { return false; }
     var marked = 0;
     $('tr.item').each(function () {
-        var data;
-        var rowid;
-        var dropdata;
-        var pushtodrop;
-        if ($(this).hasClass("selecteditem") == false && marked < counter) {
-            //change bg color
-            //$(this).css('background', 'LightGray');
+        if (!$(this).hasClass("selecteditem") && marked < counter) {
             $(this).addClass("selecteditem");
-
-            // get tr attributes
-            data = $(this).attr('drname');
-            rowid = $(this).attr('dritemid');
-            // push name to list
+            var data   = $(this).attr('drname');
+            var rowid  = $(this).attr('dritemid');
             show.push(data);
             rowsid.push(rowid);
-            dropdata = {
+            droparray.push(JSON.stringify({
                 dropProfile: "",
-                realm: $(this).attr('drrealm'),
-                account: $(this).attr('draccount'),
+                realm:    $(this).attr('drrealm'),
+                account:  $(this).attr('draccount'),
                 charName: $(this).attr('drchar'),
                 itemType: $(this).attr('dritemtype'),
-                dropit: $(this).attr('drmd5'),
-                skin: $(this).attr('drImage'),
-                itemID: $(this).attr('drID')
-            };
-            pushtodrop = JSON.stringify(dropdata);
-            droparray.push(pushtodrop);
+                dropit:   $(this).attr('drmd5'),
+                skin:     $(this).attr('drImage'),
+                itemID:   $(this).attr('drID')
+            }));
             marked++;
         }
     });
+    updateDropCount();
     var output = ParseSame(show);
-    // update panel value
-    document.getElementById('dropitem').value = JSON.stringify(droparray);
+    var di = document.getElementById('dropitem');
+    if (di) { di.value = JSON.stringify(droparray); }
     $("#droplist").html(output);
     $("#tradelist").html('<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Cannot create trade list with mass mark function.</div>');
 }
 
 function ClearAll() {
-    show 	= [];
-    rowsid	= [];
-    hideid	= [];
-    droparray = [];
-    document.getElementById('dropitem').value = "";
-    document.getElementById('listinfo').value = "";
+    show = []; rowsid = []; hideid = []; droparray = [];
+    var di = document.getElementById('dropitem');
+    var li = document.getElementById('listinfo');
+    if (di) { di.value = ""; }
+    if (li) { li.value = ""; }
     $("#tradelist").html('<div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Cleared!</div>');
     $("#droplist").html('<div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Cleared!</div>');
+    try { localStorage.removeItem('d2drop_array'); localStorage.removeItem('d2show_list'); localStorage.removeItem('d2rowsid'); } catch(e) {}
+    updateDropCount();
     showHighligh();
+}
+
+function updateDropCount() {
+    var n = droparray.length;
+    var $btn = $('#drop-show-btn');
+    if ($btn.length) {
+        $('#drop-count').text(n);
+        $btn.toggleClass('btn-danger', n > 0).toggleClass('btn-default', n === 0);
+    }
+    try {
+        localStorage.setItem('d2drop_array', JSON.stringify(droparray));
+        localStorage.setItem('d2show_list',  JSON.stringify(show));
+        localStorage.setItem('d2rowsid',     JSON.stringify(rowsid));
+    } catch(e) {}
+}
+
+function loadDropFromStorage() {
+    try {
+        var da = localStorage.getItem('d2drop_array');
+        var sl = localStorage.getItem('d2show_list');
+        var ri = localStorage.getItem('d2rowsid');
+        if (da) { droparray = JSON.parse(da); }
+        if (sl) { show      = JSON.parse(sl); }
+        if (ri) { rowsid    = JSON.parse(ri); }
+        if (droparray.length) {
+            var di = document.getElementById('dropitem');
+            var li = document.getElementById('listinfo');
+            if (di) { di.value = JSON.stringify(droparray); }
+            if (li) { li.value = JSON.stringify(droparray); }
+            var output = ParseSame(show);
+            if ($("#droplist").length)  { $("#droplist").html(output); }
+            if ($("#tradelist").length) { $("#tradelist").html(output); }
+            updateDropCount();
+        }
+    } catch(e) {}
 }

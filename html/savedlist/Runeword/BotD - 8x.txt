@@ -1,0 +1,6 @@
+{"keyword":"vex rune","occu":"8"}
+{"keyword":"hel rune","occu":"16"}
+{"keyword":"el rune","occu":"8"}
+{"keyword":"eld rune","occu":"8"}
+{"keyword":"zod rune","occu":"8"}
+{"keyword":"eth rune","occu":"8"}

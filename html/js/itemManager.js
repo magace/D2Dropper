@@ -9,6 +9,58 @@
     */
 
     $(document).ready(function() {
+
+        // Mobile sidebar drawer
+        var $sidebar  = $('#account-sidebar');
+        var $backdrop = $('#sidebar-backdrop');
+        var $toggle   = $('#sidebar-toggle');
+
+        function openDrawer()  { $sidebar.addClass('open');  $backdrop.addClass('active'); }
+        function closeDrawer() { $sidebar.removeClass('open'); $backdrop.removeClass('active'); }
+
+        $toggle.on('click', function() {
+            $sidebar.hasClass('open') ? closeDrawer() : openDrawer();
+        });
+        $backdrop.on('click', closeDrawer);
+        $sidebar.on('click', 'a.submenu', closeDrawer);
+
+        // Mobile action FAB (bottom-left)
+        var $actionMenu   = $('#action-fab-menu');
+        var $actionToggle = $('#action-toggle');
+
+        $actionToggle.on('click', function(e) {
+            e.stopPropagation();
+            $actionMenu.toggleClass('open');
+        });
+
+        $('#mob-tradelist').on('click', function() {
+            $actionMenu.removeClass('open');
+            $('#tradeListModal').modal('show');
+        });
+
+        $('#mob-drop').on('click', function() {
+            $actionMenu.removeClass('open');
+            $('#myModal').modal('show');
+        });
+
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#action-fab-container').length) {
+                $actionMenu.removeClass('open');
+            }
+        });
+
+        // Mobile: remove inline width constraints from search dropdowns so they
+        // don't force the page wider than the viewport (causing browser zoom-out)
+        function fixMobileSearch() {
+            if (window.innerWidth > 991) return;
+            $('#searchform select').each(function() {
+                this.style.removeProperty('width');
+                this.style.removeProperty('min-width');
+                this.style.removeProperty('max-width');
+            });
+        }
+        fixMobileSearch();
+
         // Attach click event listener
         $("#opendropmenu").click(function(){
              // show Modal
@@ -52,6 +104,8 @@
                 success: function(data) {
                     $("#itemsoutput").html(data);
                     $('.loader').hide();
+                    fixMobileSearch();
+                    if (typeof initItemRows === 'function') { initItemRows(); }
                 }
             });
         });
@@ -72,6 +126,7 @@
                 success:  function(data){
                     $("#itemsoutput").html(data);
                     $('.loader').hide();
+                    if (typeof initItemRows === 'function') { initItemRows(); }
                 }
             });
         });

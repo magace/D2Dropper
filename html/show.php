@@ -1,6 +1,5 @@
-<?php 
-	require 'functions.php'; 
+<?php
+	require 'functions.php';
+	require 'config.php';
 	showCurrentItems();
 ?>
-<!-- Item Manager Functions -->
-<script type="text/javascript" src="js/itemManagerShow.js"></script>

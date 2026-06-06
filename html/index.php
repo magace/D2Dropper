@@ -25,7 +25,8 @@
     <link id="layout1" rel="stylesheet" href="themes/<?php echo $themeName; ?>/css/bootstrap.css">
 
     <!-- Custom CSS -->
-	<link id="layout2" rel="stylesheet" type="text/css" href="themes/<?php echo $themeName; ?>/css/itemManager.css">
+	<?php $imv = filemtime("themes/{$themeName}/css/itemManager.css"); ?>
+	<link id="layout2" rel="stylesheet" type="text/css" href="themes/<?php echo $themeName; ?>/css/itemManager.css?v=<?php echo $imv; ?>">
 	<link id="layout3" rel="stylesheet" type="text/css" href="themes/<?php echo $themeName; ?>/css/tooltipster.css">
     <link id="layout4" rel="stylesheet" type="text/css" href="themes/<?php echo $themeName; ?>/css/jquery-ui.css">
 
@@ -65,14 +66,17 @@
                 </button>
                 <?php showThemes();?>
             </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
+            <!-- Action buttons: always visible (trade list, drop, admin) -->
+            <div class="navbar-actions-always">
+                <ul class="nav navbar-nav navbar-right">
+                    <?php userAccess(); ?>
+                </ul>
+            </div>
+            <!-- Collapsible realm selector -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <?php buildMenu(); ?>
                 </ul>
-				<ul class="nav navbar-nav navbar-right">
-					<?php userAccess(); ?>
-				</ul>
             </div>
             <!-- /.navbar-collapse -->
         </div>
@@ -91,7 +95,7 @@
 					<?php 
 						if(getRealmCount()) {
 							//	accounts
-							print '<div class="col-md-3">';
+							print '<div class="col-md-3" id="account-sidebar">';
 								print '<div class="panel panel-default">';
 									print '<div class="panel-heading">';
 										print '<h1 class="panel-title">ACCOUNTS LIST</h1>';
@@ -135,7 +139,7 @@
 		<div class="row">
 			<div class="panel panel-default text-center">
 				<div class="panel-footer">
-					ItemManager 2021 &copy; dzik
+					ItemManager 2026 &copy; dzik
 					<?php
 						$time = microtime();
 						$time = explode(' ', $time);
@@ -151,7 +155,32 @@
 		
     </div>
     <!-- /.container -->
-	
+
+	<div id="sidebar-backdrop"></div>
+	<button id="sidebar-toggle" aria-label="Open accounts menu">&#9776;</button>
+
+	<!-- Mobile action FAB (bottom-left) -->
+	<div id="action-fab-container">
+		<div id="action-fab-menu">
+			<?php
+				$_fabR  = isset($_GET['realm'])  ? intval($_GET['realm'])  : 3;
+				$_fabHC = isset($_GET['hc'])     ? intval($_GET['hc'])     : 0;
+				$_fabLD = isset($_GET['ladder']) ? intval($_GET['ladder']) : 1;
+				$_fabEX = isset($_GET['exp'])    ? intval($_GET['exp'])    : 1;
+			?>
+			<?php if (array_key_exists($currUser, $authorized)): ?>
+				<a class="action-fab-item" id="mob-tradelist">TRADE LIST</a>
+				<a class="action-fab-item" id="mob-drop">DROP</a>
+				<a class="action-fab-item" href="runeword.php?realm=<?php echo $_fabR; ?>&hc=<?php echo $_fabHC; ?>&ladder=<?php echo $_fabLD; ?>&exp=<?php echo $_fabEX; ?>">RUNEWORDS</a>
+				<a class="action-fab-item" href="grail.php?realm=<?php echo $_fabR; ?>&hc=<?php echo $_fabHC; ?>&ladder=<?php echo $_fabLD; ?>&exp=<?php echo $_fabEX; ?>">GRAIL</a>
+			<?php endif; ?>
+			<?php if (strtolower($admin) == strtolower($currUser)): ?>
+				<a class="action-fab-item" href="admin.php">ADMIN</a>
+			<?php endif; ?>
+		</div>
+		<button id="action-toggle" aria-label="Open actions">&#9881;</button>
+	</div>
+
 	<div class="loader">
 	   <div style="text-align: center;">
 		   <img class="loading-image" src="images/ajax-loader.gif" alt="loading..">
@@ -179,8 +208,8 @@
 	<!-- Item Manager Functions -->
 	<script type="text/javascript" src="js/jquery.tablesorter.min.js"></script>
 	<script type="text/javascript" src="js/html2canvas.js"></script>
-    <script type="text/javascript" src="js/itemManager.js"></script>
-    <script type="text/javascript" src="js/itemManagerShow.js"></script>
+    <script type="text/javascript" src="js/itemManager.js?v=<?php echo filemtime('js/itemManager.js'); ?>"></script>
+    <script type="text/javascript" src="js/itemManagerShow.js?v=<?php echo filemtime('js/itemManagerShow.js'); ?>"></script>
 
 	<script>
 		//variable with names to display.
@@ -189,6 +218,15 @@
 		var hideid	= [];
 		var droparray = [];
 		$('#<?php print $showthat; ?>').collapse('show');
+		<?php
+		$autopack = isset($_GET['autopack']) ? basename($_GET['autopack']) : '';
+		if ($autopack !== ''):
+		?>
+		$(document).ready(function() {
+		    $('#sloadlist').val(<?php echo json_encode($autopack); ?>);
+		    setTimeout(function() { $('.searchbut').first().trigger('click'); }, 400);
+		});
+		<?php endif; ?>
 	</script>
 
 </body>

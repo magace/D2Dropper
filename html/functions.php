@@ -125,6 +125,13 @@
 		
 
 		
+		$_r  = isset($_GET['realm'])  ? intval($_GET['realm'])  : 3;
+		$_hc = isset($_GET['hc'])     ? intval($_GET['hc'])     : 0;
+		$_ld = isset($_GET['ladder']) ? intval($_GET['ladder']) : 1;
+		$_ex = isset($_GET['exp'])    ? intval($_GET['exp'])    : 1;
+		print '<li><a class="exocet" href="runeword.php?realm='.$_r.'&hc='.$_hc.'&ladder='.$_ld.'&exp='.$_ex.'">RUNEWORDS</a></li>';
+		print '<li><a class="exocet" href="grail.php?realm='.$_r.'&hc='.$_hc.'&ladder='.$_ld.'&exp='.$_ex.'">GRAIL</a></li>';
+
 		if (strtolower($admin) == strtolower($currUser)) {
 			print '<li><a class="exocet" href="admin.php">ADMIN <span class="caret"></span></span></a></li>';
 		}
@@ -212,23 +219,50 @@
 						print '<div class="input-group">';
 							print '<span class="input-group-btn">';
 								print '<div class="btn btn-default col-md-12">pack: <select id="sloadlist" name="sloadlist" style="width:120px!important;min-width:120px;max-width:120px;"><option></option>';
-								foreach(glob(dirname(__FILE__) . '/savedlist/*') as $filename){
-									$filename = basename($filename);
-									echo "<option value='" . $filename . "'>".explode(".txt", $filename)[0]."</option>";
+								$savedlistBase = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'savedlist') . DIRECTORY_SEPARATOR;
+								$dirIter = new RecursiveIteratorIterator(
+									new RecursiveDirectoryIterator($savedlistBase, RecursiveDirectoryIterator::SKIP_DOTS)
+								);
+								$packFiles = array();
+								foreach ($dirIter as $f) {
+									if ($f->isFile() && strtolower($f->getExtension()) === 'txt') {
+										$rel = str_replace('\\', '/', str_replace($savedlistBase, '', $f->getPathname()));
+										$packFiles[] = $rel;
+									}
 								}
+								sort($packFiles);
+								$curGroup = '';
+								foreach ($packFiles as $rel) {
+									$parts  = explode('/', $rel);
+									$folder = count($parts) > 1 ? implode(' / ', array_slice($parts, 0, -1)) : '';
+									$label  = str_replace('.txt', '', end($parts));
+									if ($folder !== $curGroup) {
+										if ($curGroup !== '') echo '</optgroup>';
+										if ($folder !== '') echo '<optgroup label="' . htmlspecialchars($folder) . '">';
+										$curGroup = $folder;
+									}
+									echo '<option value="' . htmlspecialchars($rel) . '">' . htmlspecialchars($label) . '</option>';
+								}
+								if ($curGroup !== '') echo '</optgroup>';
 								print '</select></div>';
 							print '</span>';
 							print '<span class="input-group-btn">';
 								print '<div class="btn btn-default col-md-12">quality: <select id="search_parameter" name="itemtype" style="width:120px!important;min-width:120px;max-width:120px;"><option></option><option>white</option><option>magic</option><option>set</option><option>rare</option><option>unique</option><option>craft</option><option>runes</option><option>runeword</option><option>torch</option><option>annihilus</option><option>uberkeys</option><option>organs</option></select></div>';
 							print '</span>';
 							print '<span class="input-group-btn">';
-								print '<div class="btn btn-default col-md-12">type: <select name="itemtype2" style="width:120px!important;min-width:120px;max-width:120px;"><option></option><option>weapons</option><option>ring</option><option>amulet</option><option>jewel</option><option>helm</option><option>circlet</option><option>armor</option><option>shield</option><option>pelt</option><option>auricshields</option><option>voodooheads</option><option>boots</option><option>gloves</option><option>belt</option><option>small charm</option><option>large charm</option><option>grand charm</option></select></div>';
+								print '<div class="btn btn-default col-md-12">type: <select name="itemtype2" style="width:120px!important;min-width:120px;max-width:120px;"><option></option><option>weapons</option><option>ring</option><option>amulet</option><option>jewel</option><option>helm</option><option>circlet</option><option>armor</option><option>shield</option><option>pelt</option><option>auricshields</option><option>primalhelm</option><option>voodooheads</option><option>boots</option><option>gloves</option><option>belt</option><option>small charm</option><option>large charm</option><option>grand charm</option></select></div>';
 							print '</span>';
                             print '<span class="input-group-btn">';
                                 print '<div class="btn btn-default col-md-12">ethereal: <select name="eth" style="width:120px!important;min-width:120px;max-width:120px;"><option></option><option>true</option><option>false</option></select></div>';
                             print '</span>';
                             print '<span class="input-group-btn">';
                                 print '<div class="btn btn-default col-md-12">identified: <select name="identified" style="width:120px!important;min-width:120px;max-width:120px;"><option></option><option>true</option><option>false</option></select></div>';
+                            print '</span>';
+                            print '<span class="input-group-btn">';
+                                print '<div class="btn btn-default col-md-12">sockets: <select name="sockets" style="width:120px!important;min-width:120px;max-width:120px;"><option value=""></option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></div>';
+                            print '</span>';
+                            print '<span class="input-group-btn">';
+                                print '<div class="btn btn-default col-md-12">runeword: <select name="runeword" style="width:120px!important;min-width:120px;max-width:120px;"><option></option><option>true</option><option>false</option></select></div>';
                             print '</span>';
                             print '<span class="input-group-btn">';
                                 print '<div class="btn btn-default col-md-12">color: <select name="colorIt" style="width:120px!important;min-width:120px;max-width:120px;"><option></option>';
@@ -352,7 +386,7 @@
 			print '<ul class="list-group">';
 			$charLink = 'chars.php?realm=' . $queryR . '&hc=' . $queryHC . '&ladder=' . $queryLD . '&exp=' . $queryEXP . '&accountid=';
 			
-			foreach ($accounts as $nr => $account) {
+			foreach ($accounts as $account) {
 				print '<li class="list-group-item">';
 				print '<div class="mainmenu" data-toggle="collapse" data-target="#a'.$account["accountId"].'" data-aid="'.$account["accountId"].'" data-link="'.$charLink.$account["accountId"].'">'.$account["accountLogin"].'</div>';
 				print '<div id="a' . $account["accountId"] . '">';
@@ -394,7 +428,7 @@
 			
 			print '<ul id="acc'.$accid.'" class="list-unstyled">';
 			
-			foreach ($chars as $nr => $char) {
+			foreach ($chars as $char) {
 				array_push($charsIds, $char["charId"]);
 				global $showthat;
 				
@@ -466,7 +500,6 @@
 		}
 		
 		print '<div class="panel-heading">';
-			//print '<h1 class="panel-title">Items list ('.$resultcount.' '.getCurrentName().' ) <span class="showhide color8 pull-right">hide equiped</span></h1>';
 			print
                 '<h1 class="panel-title">Items list ('.$resultcount.' '.getCurrentName().' )
 			    <div class="form-inline pull-right" style="margin-top:-7px;">
@@ -477,6 +510,13 @@
                 </div>
 			</h1>';
 		print '</div>';
+		$nameCounts = array();
+		foreach ($show as $itm) {
+			$key = $itm['charName'] . '|' . $itm['itemName'];
+			$nameCounts[$key] = isset($itm['_qty']) ? intval($itm['_qty']) : (isset($nameCounts[$key]) ? $nameCounts[$key] + 1 : 1);
+		}
+
+		print '<div id="items-scroll-area">';
 		print '<table id="itemstable" class="table diablo">';
 			print '<thead><tr>';
             if (isset($_POST["search"]) AND !($_POST["itemtype"] == "torch" OR $_POST["itemtype"] == "annihilus" OR $_POST["itemtype"] == "rare")) {
@@ -501,12 +541,13 @@
                     print '<th width="15%" class="text-center exocet"><strong>COLOR</strong></th>';
                 }
 			}
+			print '<th width="5%" class="text-center exocet"><strong>QTY</strong></th>';
 			print '<th width="*" class="exocet"><strong>NAME</strong></th>';
 			print '</tr></thead>';
 			
 			print '<tbody>';
 
-			foreach ($show as $nr => $item) {
+			foreach ($show as $item) {
 				$desc	    = $item["itemDescription"];
 				$colOne		= checkStat($item["itemId"], "enhanceddefense");
 				$colTwo 	= checkStat($item["itemId"], "sockets");
@@ -602,6 +643,7 @@
 				$tooltip = /** @lang text */
 					'<center>&lt;img src=&quot;images/items/'.$item["itemImage"].'.png&quot;&gt; <br>'.$desc.''.$itCo.'</center>';
 				
+				print '<td class="text-center"><b>'.$nameCounts[$item["charName"].'|'.$item["itemName"]].'</b></td>';
 				print '<td><div class="'.$qualityColor[$item["itemQuality"]].' show-tooltip form-inline" title="'.$tooltip.'"><b>'.$item["itemName"].'</b></div></td>';
 
 				print '</tr>';
@@ -627,85 +669,128 @@
                     print '<th width="15%" class="text-center exocet"><strong>COLOR</strong></th>';
                 }
 			}
+			print '<th width="5%" class="text-center exocet"><strong>QTY</strong></th>';
 			print '<td width="*" class="exocet"><strong>NAME</th>';
 			print '<tr></tfoot>';	
 		print '</table>';
+		print '</div>';
 	}
-	
+
 	function getItemsFromDb($charid, $packname = null) {
 		global $inGameColor;
 		$selectinfo = "accountLogin, accountRealm, charName, itemId, itemName, itemType, itemQuality, itemImage, itemDescription, itemMD5, itemLocation, itemColor";
 		
 		if ($packname) {
 			$packitems = [];
-			$handle = fopen("savedlist/".$packname, "r");
-			while(!feof($handle)) array_push($packitems, json_decode(fgets($handle), true));
-			fclose($handle);
-			
+			$packPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'savedlist' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $packname);
+			$handle = @fopen($packPath, "r");
+			if ($handle) {
+				while(!feof($handle)) array_push($packitems, json_decode(fgets($handle), true));
+				fclose($handle);
+			}
+
 			$count = [];
-			
-			for ($i = 0; $i < count($packitems); $i++) {
-				try {
-					$conn = new PDO('sqlite:ItemDB.s3db') or die("Unable to connect");
-					
-					$queryR 	= $_GET["realm"];
-					$queryHC	= $_GET["hc"];
-					$queryLD	= $_GET["ladder"];
-					$queryEXP	= $_GET["exp"];
-					
-					$tempA	= " AND charHardcore = ".$queryHC;
-					$tempB 	= " AND charExpansion = ".$queryEXP;
-					$tempC 	= " AND charLadder = ".$queryLD;
-					$tempD	= "";
-					
-					$pieces = explode(",", $packitems[$i]['keyword']);
-					
-					for ($x = 0; $x < count($pieces); $x++) {
-						$valid = str_replace("'", "_", $pieces[$x]);
-						if (substr($valid, 0, 1) === "!") {
-							$one = " AND lower(itemDescription) NOT LIKE '%".substr($valid, 1, strlen($valid))."%'";
-						} else {
-							$one = " AND lower(itemDescription) LIKE '%".$valid."%'";
+
+			try {
+				$conn = new PDO('sqlite:ItemDB.s3db') or die("Unable to connect");
+
+				$queryR 	= $_GET["realm"];
+				$queryHC	= $_GET["hc"];
+				$queryLD	= $_GET["ladder"];
+				$queryEXP	= $_GET["exp"];
+
+				$tempA	= " AND charHardcore = ".$queryHC;
+				$tempB 	= " AND charExpansion = ".$queryEXP;
+				$tempC 	= " AND charLadder = ".$queryLD;
+
+				global $currUser;
+				global $noAccessItems;
+				global $itemLists;
+
+				$accessFilter = "";
+				if (array_key_exists($currUser, $noAccessItems)) {
+					for ($x = 0; $x < count($noAccessItems[$currUser]); $x++) {
+						$hideList = $noAccessItems[$currUser][$x];
+						for ($z = 0; $z < count($itemLists[$hideList]); $z++) {
+							$accessFilter .= " AND NOT (" . $itemLists[$hideList][$z] . ")";
 						}
-						$tempD .= $one;
 					}
-					
-					global $currUser;
-					global $noAccessItems;
-					global $itemLists;
-					
-					if (array_key_exists($currUser, $noAccessItems)) {
-						for ($x = 0; $x < count($noAccessItems[$currUser]); $x++) {
-							$hideList = $noAccessItems[$currUser][$x];
-							
-							for ($z = 0; $z < count($itemLists[$hideList]); $z++) {
-								$tempD .= " AND NOT (" . $itemLists[$hideList][$z] . ")";
-							}
+				}
+
+				$subqueries = [];
+				$occuList   = array();
+				$pidx       = 0;
+				for ($i = 0; $i < count($packitems); $i++) {
+					if (!$packitems[$i]) continue;
+					$tempD = "";
+
+					$kw  = isset($packitems[$i]['keyword']) ? $packitems[$i]['keyword'] : (isset($packitems[$i]['name']) ? $packitems[$i]['name'] : null);
+					$qty = isset($packitems[$i]['occu'])    ? $packitems[$i]['occu']    : (isset($packitems[$i]['qty'])  ? $packitems[$i]['qty']  : null);
+					if (!$kw || !$qty) continue;
+
+					$pieces = explode(",", $kw);
+					for ($x = 0; $x < count($pieces); $x++) {
+						$valid = str_replace("'", "_", trim($pieces[$x]));
+						if (substr($valid, 0, 1) === "!") {
+							$kword = substr($valid, 1);
+							$tempD .= " AND NOT (lower(itemName) LIKE '".$kword."%' OR lower(itemName) LIKE '% ".$kword."%')";
+						} else {
+							$tempD .= " AND (lower(itemName) LIKE '".$valid."%' OR lower(itemName) LIKE '% ".$valid."%')";
 						}
 					}
 
-					$filterBy	= "";
-					$filterBy2	= "";
-					$orderBy	= "";
-					$orderBy2	= "";
-					$colorF		= "";
-					
-					$limit		= "LIMIT " . (string)$packitems[$i]['occu'];
-					
-					$query = /** @lang text */
-						'SELECT '.$selectinfo.' FROM muleItems LEFT JOIN muleChars ON itemCharId = charId LEFT JOIN muleAccounts ON charAccountId = accountID WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.' '.$colorF.' '.$filterBy.' '.$filterBy2.' '.$orderBy.' '.$orderBy2.' '.$limit.';';
-					
-					$results	= $conn->query($query);
-					$conn		= NULL;
-					$rows 		= $results->fetchAll(PDO::FETCH_ASSOC);
-					
-					foreach ($rows as $row) array_push($count, $row);
-					
-				} catch(PDOException $e) {
-					$conn = NULL;
-					print 'Exception : '.$e->getMessage();
-					return false;
+					$subqueries[]      = 'SELECT '.$pidx.' as _pidx, '.$selectinfo.' FROM muleItems LEFT JOIN muleChars ON itemCharId = charId LEFT JOIN muleAccounts ON charAccountId = accountID WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.' '.$accessFilter;
+					$occuList[$pidx]   = intval($qty);
+					$pidx++;
 				}
+
+				if ($subqueries) {
+					$query   = implode(' UNION ALL ', $subqueries);
+					$results = $conn->query($query);
+					$rawRows = $results->fetchAll(PDO::FETCH_ASSOC);
+
+					// Group rows by pack entry index
+					$groups = array();
+					foreach ($rawRows as $row) {
+						$idx = intval($row['_pidx']);
+						unset($row['_pidx']);
+						if (!isset($groups[$idx])) $groups[$idx] = array();
+						$groups[$idx][] = $row;
+					}
+
+					// Per group: count per char, deduplicate, sort DESC, limit to occu
+					$count = array();
+					foreach ($occuList as $idx => $occu) {
+						if (!isset($groups[$idx])) continue;
+						$rows = $groups[$idx];
+						$charCounts = array();
+						foreach ($rows as $row) {
+							$cn = $row['charName'];
+							$charCounts[$cn] = isset($charCounts[$cn]) ? $charCounts[$cn] + 1 : 1;
+						}
+						// Group rows by char, annotate each with total char count
+						$charGroups = array();
+						foreach ($rows as $row) {
+							$cn = $row['charName'];
+							$row['_qty'] = $charCounts[$cn];
+							$charGroups[$cn][] = $row;
+						}
+						// Sort groups: chars with most copies first
+						uasort($charGroups, function($a, $b) { return count($b) - count($a); });
+						// Flatten and take first $occu selectable rows
+						$sorted = array();
+						foreach ($charGroups as $grp) {
+							$sorted = array_merge($sorted, $grp);
+						}
+						$count = array_merge($count, array_slice($sorted, 0, $occu));
+					}
+				}
+
+				$conn = NULL;
+			} catch(PDOException $e) {
+				$conn = NULL;
+				print 'Exception : '.$e->getMessage();
+				return false;
 			}
 
 			return $count;
@@ -762,11 +847,49 @@
 				$tempD	= "";
 				
 				$pieces = explode(",", $_POST["search"]);
-				
-				for ($x = 0; $x < count($pieces); $x++) {
-					$valid = str_replace("'", "_", $pieces[$x]);
-					$one = " AND lower(itemDescription) LIKE '%".$valid."%'";
-					$tempD .= $one;
+
+				if (!empty($_POST["itemtype"]) && $_POST["itemtype"] === 'runes') {
+					// Count how many of each rune we need (handles duplicates like Vex,Vex)
+					$runeCounts = array();
+					foreach ($pieces as $piece) {
+						$rune = strtolower(trim(str_replace("'", "_", $piece)));
+						if ($rune === '') continue;
+						$runeCounts[$rune] = isset($runeCounts[$rune]) ? $runeCounts[$rune] + 1 : 1;
+					}
+					// Build UNION ALL — one subquery per unique rune, limit each to qty needed
+					$subqueries = array();
+					$occuList   = array();
+					$pidx       = 0;
+					foreach ($runeCounts as $rune => $qty) {
+						$runePattern = (substr($rune, -5) !== ' rune') ? $rune . ' rune' : $rune;
+						$nameF = "lower(itemName) LIKE '".$runePattern."%'";
+						$subqueries[] = 'SELECT '.$pidx.' as _pidx, '.$selectinfo.' FROM muleItems LEFT JOIN muleChars ON itemCharId = charId LEFT JOIN muleAccounts ON charAccountId = accountID WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' AND '.$nameF;
+						$occuList[$pidx] = $qty;
+						$pidx++;
+					}
+					$count = array();
+					if ($subqueries) {
+						$results = $conn->query(implode(' UNION ALL ', $subqueries));
+						$rawRows = $results->fetchAll(PDO::FETCH_ASSOC);
+						$groups  = array();
+						foreach ($rawRows as $row) {
+							$idx = intval($row['_pidx']);
+							unset($row['_pidx']);
+							$groups[$idx][] = $row;
+						}
+						foreach ($occuList as $idx => $qty) {
+							if (!isset($groups[$idx])) continue;
+							$count = array_merge($count, array_slice($groups[$idx], 0, $qty));
+						}
+					}
+					$conn = NULL;
+					return $count;
+				} else {
+					for ($x = 0; $x < count($pieces); $x++) {
+						$valid = str_replace("'", "_", $pieces[$x]);
+						$one = " AND lower(itemDescription) LIKE '%".$valid."%'";
+						$tempD .= $one;
+					}
 				}
 				
 				//" AND NOT (itemQuality == 7 AND itemClassid == 603)"
@@ -815,6 +938,7 @@
 					$types2["shield"] = "AND itemType == 2";
 					$types2["pelt"] = "AND itemType == 72";
 					$types2["auricshields"] = "AND itemType == 70";
+					$types2["primalhelm"] = "AND itemType == 71";
 					$types2["voodooheads"] = "AND itemType == 69";
 					$types2["boots"] = "AND itemType == 15";
 					$types2["gloves"] = "AND itemType == 16";
@@ -848,6 +972,26 @@
 					}
 				}
 
+				$socketF = "";
+				if (isset($_POST["sockets"]) && $_POST["sockets"] !== "") {
+					$sv = intval($_POST["sockets"]);
+					if ($sv === 0) {
+						$socketF = "AND itemId NOT IN (SELECT statsItemId FROM muleItemsStats WHERE statsName = 'sockets' AND statsValue > 0)";
+					} else {
+						$socketF = "AND itemId IN (SELECT statsItemId FROM muleItemsStats WHERE statsName = 'sockets' AND statsValue = ".$sv.")";
+					}
+				}
+
+				$runewordF = "";
+				if (!empty($_POST["runeword"])) {
+					if ($_POST["runeword"] == "true") {
+						$runewordF = "AND (\"itemFlag\" & 0x4000000) == 0x4000000";
+					}
+					if ($_POST["runeword"] == "false") {
+						$runewordF = "AND (\"itemFlag\" & 0x4000000) == 0";
+					}
+				}
+
 				//$limit = "ORDER BY itemType DESC LIMIT ".$_POST["itemlimit"];
 
 				$limit = "LIMIT ".$_POST["itemlimit"];
@@ -859,7 +1003,7 @@
 				}
 				
 				$query = /** @lang text */
-					'SELECT '.$selectinfo.' FROM muleItems LEFT JOIN muleChars ON itemCharId = charId LEFT JOIN muleAccounts ON charAccountId = accountID WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.' '.$colorF.' '.$filterBy.' '.$filterBy2.' '.$orderBy.' '.$orderBy2.' '.$limit.';';
+					'SELECT '.$selectinfo.' FROM muleItems LEFT JOIN muleChars ON itemCharId = charId LEFT JOIN muleAccounts ON charAccountId = accountID WHERE accountRealm = '.$queryR.' '.$tempA.' '.$tempB.' '.$tempC.' '.$tempD.' '.$colorF.' '.$filterBy.' '.$filterBy2.' '.$orderBy.' '.$orderBy2.' '.$socketF.' '.$runewordF.' '.$limit.';';
 				
 				$results = $conn->query($query);
 				
