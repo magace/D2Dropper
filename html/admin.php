@@ -150,6 +150,14 @@
 							</li>
 						</ul>
 						<div class="panel-heading">
+							<h1 class="panel-title">PACKLIST</h1>
+						</div>
+						<ul class="list-group">
+							<li class="list-group-item">
+								<a id="open-packlist-editor" href="#" class="mainmenu">PACKLIST EDITOR</a>
+							</li>
+						</ul>
+						<div class="panel-heading">
 							<h1 class="panel-title">Repository</h1>
 						</div>
 						<ul class="list-group">
@@ -217,7 +225,17 @@
 	
 	<!-- Admin Panel JS -->
 	<script>
-		$("a.mainmenu").click(function(e){ 
+		$('#open-packlist-editor').click(function(e) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			$('.loader').show();
+			$.get('packlist.php?action=editor', function(data) {
+				$('#output').html(data);
+				$('.loader').hide();
+			});
+		});
+
+		$("a.mainmenu").click(function(e){
 			e.preventDefault();
 			var fun = $(this).attr('function');
 			var arg = $(this).attr('arg');
